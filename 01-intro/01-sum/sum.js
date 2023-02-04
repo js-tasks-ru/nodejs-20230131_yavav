@@ -1,12 +1,8 @@
 function sum(a, b) {
-  try {
-    if (typeof(a) == 'number' && typeof(b) == 'number') {
-      return a + b;
-    } else {
-      throw new TypeError('data type error!');
-    }
-  } catch (err) {
-    return err.name;
+  if (Number.isFinite(a) && Number.isFinite(b)) {
+    return a + b;
+  } else {
+    throw new TypeError('my data type error!');
   }
 }
 
