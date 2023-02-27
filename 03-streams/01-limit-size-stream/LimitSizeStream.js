@@ -6,19 +6,20 @@ class LimitSizeStream extends stream.Transform {
     super(options);
 
     this.limit = options.limit;
-    this.setEncoding(options.encoding);
-    // this.curSize = 0;
-    this.curSize = '';
+    this.curSize = 0;
+    // this.curSize = '';
+    // this.encoding=options.encoding;
   }
 
   _transform(chunk, encoding, callback) {
-    // if (this.curSize + Buffer.from(chunk, encoding).length > this.limit) {
-    if (Buffer.from(this.curSize + chunk).length > this.limit) {
-      console.log(new LimitExceededError);
+    // if (Buffer.from(this.curSize + chunk).length > this.limit) {
+    if (this.curSize + Buffer.from(chunk).length > this.limit) {
+      throw new LimitExceededError;
+      // console.log(new LimitExceededError);
     } else {
       callback(null, chunk);
-      // this.curSize += Buffer.from(chunk, encoding).length;
-      this.curSize += chunk;
+      this.curSize += Buffer.from(chunk).length;
+      // this.curSize += chunk;
     }
   }
 }
