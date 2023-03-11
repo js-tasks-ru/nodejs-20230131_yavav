@@ -12,6 +12,8 @@ server.on('request', (req, res) => {
   const filepath = path.join(__dirname, 'files', pathname);
 
   const myStream = fs.createReadStream(filepath);
+  
+
 
   switch (req.method) {
     case 'GET':
@@ -23,14 +25,23 @@ server.on('request', (req, res) => {
       //   res.end();
       // });
 
+      if ((path.join(__dirname, 'files')) !== (path.dirname(filepath))) {
+          res.statusCode = 400;
+          res.end('Path is wrong');
+      }
+
       myStream.on('error', (err) => {
         if (err.code === 'ENOENT') {
           res.statusCode = 404;
           res.end('File not found');
-        } else if (path.relative(filepath, path.join(__dirname, 'files')) != '') {
-          res.statusCode = 400;
-          res.end('Path is wrong');
+        // } else if ((path.join(__dirname, 'files')) !== (path.dirname(filepath))) {
+        //   res.statusCode = 400;
+        //   res.end('Path is wrong');
         }
+      });
+
+      myStream.on('aborted', () => {
+        res.destroy();
       });
 
       break;
@@ -40,9 +51,9 @@ server.on('request', (req, res) => {
       res.end('Not implemented');
   }
   
-  req.on('aborted', () => {
-    res.destroy();
-  });
+  // req.on('aborted', () => {
+  //   res.destroy();
+  // });
 
 });
 
