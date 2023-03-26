@@ -5,34 +5,34 @@ class LineSplitStream extends stream.Transform {
   constructor(options) {
     super(options);
     
+    this.eol = os.EOL;
     this.lines = [];
-    this.myDelimit = '\r\n';
   }
 
   _transform(chunk, encoding, cb) {
 
-    while (true) {
-      let myPos = chunk.toString().indexOf(this.myDelimit, 0);
+    // while (true) {
+    //   let myPos = chunk.toString().indexOf(this.eol, 0);
+    //   if (myPos < 0) break;
+    //   this.lines.push(chunk.toString().slice(0, myPos));
+    //   chunk = Buffer.from(chunk.toString().slice(myPos + (this.eol).length));
+    // }
 
-      if (myPos < 0) break;
+    this.lines = chunk.toString().split(this.eol);
 
-      this.lines.push(chunk.toString().slice(0, myPos).trim());
-      chunk = Buffer.from(chunk.toString().slice(myPos + (this.myDelimit == '\r\n' ? 2: 1)));
-      
-    }
+    this.lines.forEach((elm) => {
+      this.push(elm);
+    });
     
-    if (chunk.toString().length >= 0) this.lines.push(chunk.toString().trim());
+    this.lines.length = 0;
     
-    cb();
+    cb(null, null);
+
   }
-
+  
   _flush(cb) { 
-      this.lines.forEach((elm) => {
-        this.push(elm + this.myDelimit);
-      //cb(this.lines);
-      //cb();
-       });
-       cb();
+
+       cb(null, null);
     };
 
 }
